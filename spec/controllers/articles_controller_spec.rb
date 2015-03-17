@@ -8,19 +8,19 @@ describe ArticlesController do
   end
 
   # create an article
-  context 'when logged in' do
-    let!(:user) { User.create!(email: 'fake', username: 'fake', password: 'fake') }
+  describe 'passes #authenticate' do
+    let(:user) { User.create(username: 'fakey', email: 'fake@fake.fake', password: 'fake') }
     before do
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
     end
 
-    it 'renders the new page' do
+    it 'redirects from #new when not logged in' do
       get :new
-      expect(response).to_not be_redirect
+      expect(response).to be_success
     end
 
     it 'creates an article' do
-      category = Category.create(name: 'Fake Category')
+      category = Category.create!(name: 'Fake Category')
       expect {
         post :create, article: {title: 'Fake Article', price: 500, author_id: user.id, category: category.id}
       }.to change { Article.count }.by(1)

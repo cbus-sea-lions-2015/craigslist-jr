@@ -1,27 +1,31 @@
 require 'rails_helper'
 
 feature 'Browsing categories' do
-  let!(:category) { Category.create!(name: 'Fake Category') }
-  let!(:user)     { User.create!(email: 'fake', username: 'fake', password: 'fake') }
-  let!(:article)  { category.articles.create!(title: "Fake Article", price: 200, author: user) }
-
-  # show categories
-  scenario 'shows a list' do
-    visit root_path
-    expect(page).to have_link("Fake Category")
-  end
+  # given a category
+  let!(:category) { Category.create!(name: 'bikes') }
+  # and an article in that category
+  let!(:user) { User.create(username: 'fakey', email: 'fake@fake.fake', password: 'fake') }
+  let!(:article) { category.articles.create!(author: user, title: 'bike4sale', description: 'buy my bike you friend') }
 
   # navigate categories
-  scenario 'clicks a link' do
-    visit root_path
-    click_link("Fake Category")
-    expect(page).to have_content("Fake Article")
-    expect(URI(current_url).path).to eq category_articles_path(category)
+  scenario 'clicking a category link' do
+    # when a user clicks the category link
+    visit(categories_path)
+    click_link('bikes')
+    # then I should see the category's page
+    expect(current_path).to eq(category_articles_path(category))
+    # with the article title on it
+    expect(page).to have_content('bike4sale')
   end
 
   # show an article
-  scenario 'displays an article' do
-    visit category_article_path(category, article)
-    expect(find("h1")).to have_content("Fake Article")
+  scenario 'viewing an article' do
+    # when i click on an article
+    visit(category_articles_path(category))
+    click_link('bike4sale')
+    # the article's information will appear
+    expect(current_path).to eq(category_article_path(category, article))
+    expect(page).to have_content('bike4sale')
+    expect(page).to have_content('buy my bike you friend')
   end
 end

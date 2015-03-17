@@ -2,30 +2,34 @@ require 'rails_helper'
 
 feature 'Users' do
   # create a new user
-  scenario 'can be created' do
-    visit signup_path
-    within("#new_user") do
-      fill_in 'Username', with: 'fakeyguy'
-      fill_in 'Email', with: 'fake@fakerson.fake'
-      fill_in 'Password', with: 'donkey'
-      fill_in 'Password confirmation', with: 'donkey'
-    end
+  scenario 'signing up' do
+    visit(signup_path)
+    expect(page).to_not have_link("Logout")
+
+    fill_in 'Username', with: 'fakey'
+    fill_in 'Email', with: 'fake@fake.fake'
+    fill_in 'Password', with: 'fake'
+    fill_in 'Password confirmation', with: 'fake'
     click_button 'Create User'
-    expect(page).to have_content "Welcome fakeyguy"
+
+    expect(current_path).to eq(dashboard_path)
+    expect(page).to have_link("Logout")
   end
 
+  # login
   feature 'with an existing user' do
-    let!(:user) { User.create!(email: 'fake@fakerson.fake', username: 'fake', password: 'fake') }
+    let!(:user) { User.create!(username: 'fakey', email: 'fake@fake.fake', password: 'fake') }
 
-    # login
-    scenario 'can log in' do
-      visit login_path
-      within("#login-form") do
-        fill_in 'Email', with: 'fake@fakerson.fake'
-        fill_in 'Password', with: 'fake'
-      end
-      click_button "Login"
-      expect(page).to have_link("Logout")
+    scenario 'logging in' do
+      visit(login_path)
+      expect(page).to have_link("Login")
+
+      fill_in 'Email', with: 'fake@fake.fake'
+      fill_in 'Password', with: 'fake'
+      click_button 'Login'
+
+      expect(current_path).to eq(dashboard_path)
+      expect(page).to_not have_link("Login")
     end
   end
 end

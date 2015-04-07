@@ -1,6 +1,6 @@
 require 'rails_helper'
 
 feature 'Browsing categories' do
-  # navigate categories
-  # show an article
+ # when:  the user visits the categories page.
+ # then:  A list of containing all the categories should display. 
 end

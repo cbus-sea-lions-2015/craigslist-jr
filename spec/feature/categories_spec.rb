@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-given(:CAT) { Category.create(:name => "dogs")}
+given(:category) { Category.create(:name => "dogs")}
 
 feature 'Browsing categories' do
  # given: that categories exist
